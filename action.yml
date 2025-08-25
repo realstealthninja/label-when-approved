@@ -17,8 +17,7 @@ inputs:
     default: 'approved'
 
   requiredApproves:
-    description: the number of approvals required 
-      for this label to be applied
+    description: the number of approvals required for this label to be applied
     required: true
     default: 1
 
