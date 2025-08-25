@@ -31261,18 +31261,15 @@ async function run() {
       throw new Error('This action can only be run on pull requests')
     }
 
-    const reviews = await octokit.request(
-      'GET /repos/{owner}/{repo}/pulls/{pull_number}/reviews',
-      {
-        owner: context.repo.owner,
-        repo: context.repo.repo,
-        pull_number: pull_request.number
-      }
-    );
+    const reviews = await octokit.rest.pulls.listReviews({
+      owner: context.repo.owner,
+      repo: context.repo.repo,
+      pull_number: pull_request.number
+    });
 
     let approvals = 0;
 
-    reviews.forEach((review) => {
+    reviews.data.forEach((review) => {
       if (review['state'] === 'APPROVED') {
         approvals++;
       }
