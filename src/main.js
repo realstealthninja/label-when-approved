@@ -40,14 +40,14 @@ export async function run() {
         owner: context.repo.owner,
         repo: context.repo.repo,
         issue_number: pull_request.number,
-        label: labelName
+        labels: [labelName]
       })
     } else if (approvals < requiredApprovals) {
       await octokit.rest.issues.removeLabel({
         owner: context.repo.owner,
         repo: context.repo.repo,
         issue_number: pull_request.number,
-        label: labelName
+        labels: [labelName]
       })
     }
   } catch (error) {
