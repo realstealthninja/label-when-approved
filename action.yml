@@ -3,8 +3,8 @@ description: Adds a label when pull request has required amount of approvals
 author: realstealthninja
 
 branding:
-  icon: heart
-  color: red
+  icon: check-square
+  color: green
 
 inputs:
   secret:
