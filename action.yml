@@ -1,23 +1,26 @@
-name: The name of your action here
-description: Provide a description here
-author: Your name or organization here
+name: label-when-approved
+description: Adds a label when pull request has required amount of approvals
+author: realstealthninja
 
-# Add your action's branding here. This will appear on the GitHub Marketplace.
 branding:
   icon: heart
   color: red
 
-# Define your inputs here.
 inputs:
-  milliseconds:
-    description: Your input description here
+  secret:
+    description: github token
     required: true
-    default: '1000'
 
-# Define your outputs here.
-outputs:
-  time:
-    description: Your output description here
+  label:
+    description: name of label
+    required: true
+    default: 'approved'
+
+  requiredApproves:
+    description: the number of approvals required 
+      for this label to be applied
+    required: true
+    default: 1
 
 runs:
   using: node24
