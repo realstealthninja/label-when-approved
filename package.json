@@ -1,17 +1,17 @@
 {
-  "name": "javascript-action",
-  "description": "GitHub Actions JavaScript Template",
-  "version": "0.3.0",
+  "name": "label-when-approved",
+  "description": "GitHub Action to label the pull request when it has been approved",
+  "version": "0.4.0",
   "author": "",
   "type": "module",
   "private": true,
-  "homepage": "https://github.com/actions/javascript-action#readme",
+  "homepage": "https://github.com/realstealthninja/label-when-approved#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/actions/javascript-action.git"
+    "url": "git+https://github.com/realstealthninja/label-when-approved.git"
   },
   "bugs": {
-    "url": "https://github.com/actions/javascript-action/issues"
+    "url": "https://github.com/realstealthninja/label-when-approved/issues"
   },
   "keywords": [
     "actions"
