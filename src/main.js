@@ -42,6 +42,13 @@ export async function run() {
         issue_number: pull_request.number,
         label: labelName
       })
+    } else if (approvals < requiredApprovals) {
+      await octokit.rest.issues.removeLabel({
+        owner: context.repo.owner,
+        repo: context.repo.repo,
+        issue_number: pull_request.number,
+        label: labelName
+      })
     }
   } catch (error) {
     // Fail the workflow run if an error occurs
