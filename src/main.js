@@ -1,5 +1,5 @@
 import * as core from '@actions/core'
-import { wait } from './wait.js'
+import * as github from '@actions/github'
 
 /**
  * The main function for the action.
@@ -8,18 +8,44 @@ import { wait } from './wait.js'
  */
 export async function run() {
   try {
-    const ms = core.getInput('milliseconds')
+    // inputs
+    const secret = core.getInput('secret')
+    const labelName = core.getInput('label')
+    const requiredApprovals = core.getInput('required-approves')
 
-    // Debug logs are only output if the `ACTIONS_STEP_DEBUG` secret is true
-    core.debug(`Waiting ${ms} milliseconds ...`)
+    const octokit = github.getOctokit(secret)
+    const context = github.context
+    const pull_request = context.payload.pull_request
 
-    // Log the current timestamp, wait, then log the new timestamp
-    core.debug(new Date().toTimeString())
-    await wait(parseInt(ms, 10))
-    core.debug(new Date().toTimeString())
+    if (!pull_request) {
+      throw new Error('This action can only be run on pull requests')
+    }
 
-    // Set outputs for other workflow steps to use
-    core.setOutput('time', new Date().toTimeString())
+    const reviews = await octokit.request(
+      'GET /repos/{owner}/{repo}/pulls/{pull_number}/reviews',
+      {
+        owner: context.repo.owner,
+        repo: context.repo.repo,
+        pull_number: pull_request.number
+      }
+    )
+
+    let approvals = 0
+
+    reviews.forEach((review) => {
+      if (review['state'] === 'APPROVED') {
+        approvals++
+      }
+    })
+
+    if (approvals >= requiredApprovals) {
+      await octokit.rest.issues.addLabels({
+        owner: context.repo.owner,
+        repo: context.repo.repo,
+        issue_number: pull_request.number,
+        label: labelName
+      })
+    }
   } catch (error) {
     // Fail the workflow run if an error occurs
     if (error instanceof Error) core.setFailed(error.message)
