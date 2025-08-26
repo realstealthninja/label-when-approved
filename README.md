@@ -8,8 +8,8 @@
 
 Adds an approved label when required amount of reviews have approved
 
-
 Example workflow
+
 ```yml
 on: pull_request_review
 name: Add "approved" label when approved
@@ -23,5 +23,5 @@ jobs:
         with:
           approvals: 1
           secret: ${{ secrets.GITHUB_TOKEN }}
-          label: "approved"
+          label: 'approved'
 ```
