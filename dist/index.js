@@ -31251,7 +31251,7 @@ async function run() {
     // inputs
     const secret = coreExports.getInput('secret');
     const labelName = coreExports.getInput('label');
-    const requiredApprovals = coreExports.getInput('required-approves');
+    const minapprovals = coreExports.getInput('approvals');
 
     const octokit = githubExports.getOctokit(secret);
     const context = githubExports.context;
@@ -31275,12 +31275,19 @@ async function run() {
       }
     });
 
-    if (approvals >= requiredApprovals) {
+    if (approvals >= minapprovals) {
       await octokit.rest.issues.addLabels({
         owner: context.repo.owner,
         repo: context.repo.repo,
         issue_number: pull_request.number,
-        label: labelName
+        labels: [labelName]
+      });
+    } else if (approvals < minapprovals) {
+      await octokit.rest.issues.removeLabel({
+        owner: context.repo.owner,
+        repo: context.repo.repo,
+        issue_number: pull_request.number,
+        labels: [labelName]
       });
     }
   } catch (error) {
