@@ -29,13 +29,16 @@ export async function run() {
 
     let approvals = 0
 
+    core.debug('Iterating over reviews')
     reviews.data.forEach((review) => {
+      core.debug('review: ' + review['id'] + 'state: ' + review['state'])
       if (review['state'] === 'APPROVED') {
         approvals++
       }
     })
 
     if (approvals >= minapprovals) {
+      core.debug('Approval requirement is met, adding label')
       await octokit.rest.issues.addLabels({
         owner: context.repo.owner,
         repo: context.repo.repo,
@@ -43,6 +46,7 @@ export async function run() {
         labels: [labelName]
       })
     } else if (approvals < minapprovals) {
+      core.debug('Approval requirement is unmet, removing label')
       await octokit.rest.issues.removeLabel({
         owner: context.repo.owner,
         repo: context.repo.repo,
