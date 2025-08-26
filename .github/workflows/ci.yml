@@ -60,4 +60,4 @@ jobs:
         with:
           label: 'approved'
           secret: ${{ secrets.GITHUB_TOKEN }}
-          requiredApproves: 2
+          approvals: 2
