@@ -16,10 +16,10 @@ inputs:
     required: true
     default: 'approved'
 
-  requiredApproves:
+  approvals:
     description: the number of approvals required for this label to be applied
     required: true
-    default: 1
+    default: "1"
 
 runs:
   using: node24

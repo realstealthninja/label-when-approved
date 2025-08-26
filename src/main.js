@@ -11,7 +11,7 @@ export async function run() {
     // inputs
     const secret = core.getInput('secret')
     const labelName = core.getInput('label')
-    const requiredApprovals = core.getInput('required-approves')
+    const minapprovals = core.getInput('approvals')
 
     const octokit = github.getOctokit(secret)
     const context = github.context
@@ -35,14 +35,14 @@ export async function run() {
       }
     })
 
-    if (approvals >= requiredApprovals) {
+    if (approvals >= minapprovals) {
       await octokit.rest.issues.addLabels({
         owner: context.repo.owner,
         repo: context.repo.repo,
         issue_number: pull_request.number,
         labels: [labelName]
       })
-    } else if (approvals < requiredApprovals) {
+    } else if (approvals < minapprovals) {
       await octokit.rest.issues.removeLabel({
         owner: context.repo.owner,
         repo: context.repo.repo,
