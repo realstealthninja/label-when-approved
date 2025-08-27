@@ -31,7 +31,7 @@ export async function run() {
       {
         id: 123,
         state: 'APPROVED',
-        submitted_on: Date.now()
+        submitted_at: Date.now()
       }
     ]
 
@@ -40,17 +40,20 @@ export async function run() {
       return {
         id: review['user'].id,
         state: review['state'],
-        submitted_on: Date.parse(review['submitted_at'])
+        submitted_at: Date.parse(review['submitted_at'])
       }
     })
-    core.debug('simplified reviews: ' + simplifiedreviews.toString())
+    core.debug(
+      'simplified reviews: ' +
+        simplifiedreviews.forEach((x) => x.state + ' ' + x.id).toString()
+    )
 
     let userset = new Map()
 
     core.debug('Filtering reviews by the same authors')
     simplifiedreviews.forEach((review) => {
       if (userset.has(review.id)) {
-        if (review.submitted_on > userset.get(review.id).submitted_on) {
+        if (review.submitted_at > userset.get(review.id).submitted_at) {
           userset.set(review.id, review)
         } else {
           userset(review.id, review)
@@ -58,7 +61,7 @@ export async function run() {
       }
     })
 
-    core.debug('filtered reviews: ' + userset.toString())
+    core.debug('filtered reviews: ' + userset.keys())
     core.debug('counting approvals')
 
     let approvals = 0
