@@ -36,7 +36,7 @@ export async function run() {
     ]
 
     core.debug('simplifying reviews')
-    simplifiedreviews = reviews.flatMap((review, index, array) => {
+    simplifiedreviews = reviews.data.flatMap((review, index, array) => {
       return {
         id: review['user'].id,
         state: review['state'],
