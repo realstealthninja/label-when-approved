@@ -31267,11 +31267,42 @@ async function run() {
       pull_number: pull_request.number
     });
 
-    let approvals = 0;
+    var simplifiedreviews = [
+      {
+        id: 123,
+        state: 'APPROVED',
+        submitted_on: Date.now()
+      }
+    ];
 
-    coreExports.debug('Iterating over reviews');
-    reviews.data.forEach((review) => {
-      coreExports.debug('review: ' + review['id'] + 'state: ' + review['state']);
+    coreExports.debug('simplifying reviews');
+    simplifiedreviews = reviews.flatMap((review, index, array) => {
+      return {
+        id: review['user'].id,
+        state: review['state'],
+        submitted_on: Date(review['submitted_on'])
+      }
+    });
+    coreExports.debug('simplified reviews: ' + simplifiedreviews.toString);
+
+    let userset = new Map();
+
+    coreExports.debug('Filtering reviews by the same authors');
+    simplifiedreviews.forEach((review) => {
+      if (userset.has(review.id)) {
+        if (review.submitted_on > userset.get(review.id).submitted_on) {
+          userset.set(review.id, review);
+        } else {
+          userset(review.id, review);
+        }
+      }
+    });
+
+    coreExports.debug('filtered reviews: ' + userset.toString());
+    coreExports.debug('counting approvals');
+
+    let approvals = 0;
+    userset.forEach((review, id) => {
       if (review['state'] === 'APPROVED') {
         approvals++;
       }
