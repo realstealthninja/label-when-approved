@@ -45,7 +45,7 @@ export async function run() {
     })
     core.debug(
       'simplified reviews: ' +
-        simplifiedreviews.forEach((x) => x.state + ' ' + x.id).toString()
+        simplifiedreviews.forEach((x) => x.state + ' ' + x.id)
     )
 
     let userset = new Map()
