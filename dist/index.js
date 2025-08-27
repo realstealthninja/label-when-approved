@@ -31283,10 +31283,6 @@ async function run() {
         submitted_at: Date.parse(review['submitted_at'])
       }
     });
-    coreExports.debug(
-      'simplified reviews: ' +
-        simplifiedreviews.forEach((x) => x.state + ' ' + x.id).toString()
-    );
 
     let userset = new Map();
 
@@ -31301,11 +31297,11 @@ async function run() {
       }
     });
 
-    coreExports.debug('filtered reviews: ' + userset.keys());
     coreExports.debug('counting approvals');
 
     let approvals = 0;
     userset.forEach((review, id) => {
+      coreExports.debug(review['id'] + ' ' + review['state']);
       if (review['state'] === 'APPROVED') {
         approvals++;
       }

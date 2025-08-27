@@ -43,10 +43,6 @@ export async function run() {
         submitted_at: Date.parse(review['submitted_at'])
       }
     })
-    core.debug(
-      'simplified reviews: ' +
-        simplifiedreviews.flatMap((x) => x.state + ' ' + x.id).toString()
-    )
 
     let userset = new Map()
 
@@ -61,11 +57,11 @@ export async function run() {
       }
     })
 
-    core.debug('filtered reviews: ' + userset.keys())
     core.debug('counting approvals')
 
     let approvals = 0
     userset.forEach((review, id) => {
+      core.debug(review['id'] + ' ' + review['state'])
       if (review['state'] === 'APPROVED') {
         approvals++
       }
