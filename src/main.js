@@ -40,10 +40,10 @@ export async function run() {
       return {
         id: review['user'].id,
         state: review['state'],
-        submitted_on: Date(review['submitted_on'])
+        submitted_on: Date.parse(review['submitted_at'])
       }
     })
-    core.debug('simplified reviews: ' + simplifiedreviews.toString)
+    core.debug('simplified reviews: ' + simplifiedreviews.toString())
 
     let userset = new Map()
 
