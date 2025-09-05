@@ -31301,11 +31301,13 @@ async function run() {
 
     let approvals = 0;
     userset.forEach((review, id) => {
-      coreExports.debug(review['id'] + ' ' + review['state']);
+      coreExports.debug(review);
       if (review['state'] === 'APPROVED') {
         approvals++;
       }
     });
+
+    coreExports.debug('approvals: ' + String(approvals));
 
     if (approvals >= minapprovals) {
       coreExports.debug('Approval requirement is met, adding label');

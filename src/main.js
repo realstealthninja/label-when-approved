@@ -61,11 +61,13 @@ export async function run() {
 
     let approvals = 0
     userset.forEach((review, id) => {
-      core.debug(review['id'] + ' ' + review['state'])
+      core.debug(review)
       if (review['state'] === 'APPROVED') {
         approvals++
       }
     })
+
+    core.debug('approvals: ' + String(approvals))
 
     if (approvals >= minapprovals) {
       core.debug('Approval requirement is met, adding label')
