@@ -70,7 +70,7 @@ export async function run() {
     core.debug('approvals: ' + String(approvals))
 
     if (approvals >= minapprovals) {
-      core.debug('Approval requirement is met, adding label')
+      core.info('Approval requirement is met, adding label')
       await octokit.rest.issues.addLabels({
         owner: context.repo.owner,
         repo: context.repo.repo,
@@ -78,7 +78,7 @@ export async function run() {
         labels: [labelName]
       })
     } else if (approvals < minapprovals) {
-      core.debug('Approval requirement is unmet, removing label')
+      core.info('Approval requirement is not met, removing label')
       await octokit.rest.issues.removeLabel({
         owner: context.repo.owner,
         repo: context.repo.repo,

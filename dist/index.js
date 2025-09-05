@@ -31310,7 +31310,7 @@ async function run() {
     coreExports.debug('approvals: ' + String(approvals));
 
     if (approvals >= minapprovals) {
-      coreExports.debug('Approval requirement is met, adding label');
+      coreExports.info('Approval requirement is met, adding label');
       await octokit.rest.issues.addLabels({
         owner: context.repo.owner,
         repo: context.repo.repo,
@@ -31318,7 +31318,7 @@ async function run() {
         labels: [labelName]
       });
     } else if (approvals < minapprovals) {
-      coreExports.debug('Approval requirement is unmet, removing label');
+      coreExports.info('Approval requirement is not met, removing label');
       await octokit.rest.issues.removeLabel({
         owner: context.repo.owner,
         repo: context.repo.repo,
