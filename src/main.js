@@ -51,9 +51,9 @@ export async function run() {
       if (userset.has(review.id)) {
         if (review.submitted_at > userset.get(review.id).submitted_at) {
           userset.set(review.id, review)
-        } else {
-          userset(review.id, review)
         }
+      } else {
+        userset.set(review.id, review)
       }
     })
 
@@ -61,7 +61,7 @@ export async function run() {
 
     let approvals = 0
     userset.forEach((review, id) => {
-      core.debug(review)
+      core.debug(review['state'])
       if (review['state'] === 'APPROVED') {
         approvals++
       }
