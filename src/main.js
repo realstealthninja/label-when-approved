@@ -1,5 +1,6 @@
 import * as core from '@actions/core'
 import * as github from '@actions/github'
+import ReviewerAssociation from './association'
 
 /**
  * The main function for the action.
@@ -12,6 +13,9 @@ export async function run() {
     const secret = core.getInput('secret')
     const labelName = core.getInput('label')
     const minapprovals = core.getInput('approvals')
+    const reviewerAssociation = ReviewerAssociation.fromString(
+      core.getInput('reviewer-association')
+    )
 
     const octokit = github.getOctokit(secret)
     const context = github.context
@@ -19,6 +23,10 @@ export async function run() {
 
     if (!pull_request) {
       throw new Error('This action can only be run on pull requests')
+    }
+
+    if (!(reviewerAssociation instanceof ReviewerAssociation)) {
+      throw new Error('Invalid reviewer-association value')
     }
 
     const reviews = await octokit.rest.pulls.listReviews({
@@ -31,7 +39,8 @@ export async function run() {
       {
         id: 123,
         state: 'APPROVED',
-        submitted_at: Date.now()
+        submitted_at: Date.now(),
+        reviewerAssociation: ReviewerAssociation.fromString('NONE')
       }
     ]
 
@@ -40,7 +49,10 @@ export async function run() {
       return {
         id: review['user'].id,
         state: review['state'],
-        submitted_at: Date.parse(review['submitted_at'])
+        submitted_at: Date.parse(review['submitted_at']),
+        reviewerAssociation: ReviewerAssociation.fromString(
+          review['author_association']
+        )
       }
     })
 
@@ -48,12 +60,19 @@ export async function run() {
 
     core.debug('Filtering reviews by the same authors')
     simplifiedreviews.forEach((review) => {
-      if (userset.has(review.id)) {
-        if (review.submitted_at > userset.get(review.id).submitted_at) {
+      if (
+        ReviewerAssociation.isGreaterOrEqual(
+          review.reviewerAssociation,
+          reviewerAssociation
+        )
+      ) {
+        if (userset.has(review.id)) {
+          if (review.submitted_at > userset.get(review.id).submitted_at) {
+            userset.set(review.id, review)
+          }
+        } else {
           userset.set(review.id, review)
         }
-      } else {
-        userset.set(review.id, review)
       }
     })
 

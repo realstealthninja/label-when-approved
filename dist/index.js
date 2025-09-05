@@ -31241,6 +31241,87 @@ function requireGithub () {
 
 var githubExports = requireGithub();
 
+class ReviewerAssociation {
+  static None = new ReviewerAssociation('NONE')
+  static FirstTimer = new ReviewerAssociation('FIRST_TIMER')
+  static FirstTimeContributor = new ReviewerAssociation(
+    'FIRST_TIME_CONTRIBUTOR'
+  )
+  static Contributor = new ReviewerAssociation('CONTRIBUTOR')
+  static Collaborator = new ReviewerAssociation('COLLARBORATOR')
+  static Member = new ReviewerAssociation('MEMBER')
+  static Owner = new ReviewerAssociation('OWNER')
+
+  constructor(string) {
+    this.string = string;
+
+    switch (string) {
+      case 'NONE':
+        this.enumOrdinal = 0;
+        break
+      case 'FIRST_TIMER':
+        this.enumOrdinal = 1;
+        break
+      case 'FIRST_TIME_CONTRIBUTOR':
+        this.enumOrdinal = 2;
+        break
+      case 'CONTRIBUTOR':
+        this.enumOrdinal = 3;
+        break
+      case 'COLLABORATOR':
+        this.enumOrdinal = 4;
+        break
+      case 'MEMBER':
+        this.enumOrdinal = 5;
+        break
+      case 'OWNER':
+        this.enumOrdinal = 6;
+        break
+      default:
+        this.enumOrdinal = -1;
+    }
+  }
+
+  /**
+   * Compares the given association
+   * @param {ReviewerAssociation} lhs left hand side
+   * @param {ReviewerAssociation} rhs right hand side
+   * @returns {boolean} true if lhs is greater than or equal to rhs
+   */
+  static isGreaterOrEqual(lhs, rhs) {
+    return lhs.enumOrdinal >= rhs.enumOrdinal
+  }
+
+  /**
+   * Converts the given string to an enum element
+   * @param {string} string the string to be converted to this enum
+   * @returns {ReviewerAssociation} the enum object
+   */
+  static fromString(string) {
+    switch (string) {
+      case 'NONE':
+        return this.None
+      case 'FIRST_TIMER':
+        return this.FirstTimer
+      case 'FIRST_TIME_CONTRIBUTOR':
+        return this.FirstTimeContributor
+      case 'CONTRIBUTOR':
+        return this.Contributor
+      case 'COLLABORATOR':
+        return this.Collaborator
+      case 'MEMBER':
+        return this.Member
+      case 'OWNER':
+        return this.Owner
+      default:
+        return ReviewerAssociation.Notfound
+    }
+  }
+  toString() {
+    return `ReviewerAssociation.${this.string}`
+  }
+}
+
 /**
  * The main function for the action.
  *
@@ -31252,6 +31333,9 @@ async function run() {
     const secret = coreExports.getInput('secret');
     const labelName = coreExports.getInput('label');
     const minapprovals = coreExports.getInput('approvals');
+    const reviewerAssociation = ReviewerAssociation.fromString(
+      coreExports.getInput('reviewer-association')
+    );
 
     const octokit = githubExports.getOctokit(secret);
     const context = githubExports.context;
@@ -31259,6 +31343,10 @@ async function run() {
 
     if (!pull_request) {
       throw new Error('This action can only be run on pull requests')
+    }
+
+    if (!(reviewerAssociation instanceof ReviewerAssociation)) {
+      throw new Error('Invalid reviewer-association value')
     }
 
     const reviews = await octokit.rest.pulls.listReviews({
@@ -31271,7 +31359,8 @@ async function run() {
       {
         id: 123,
         state: 'APPROVED',
-        submitted_at: Date.now()
+        submitted_at: Date.now(),
+        reviewerAssociation: ReviewerAssociation.fromString('NONE')
       }
     ];
 
@@ -31280,7 +31369,10 @@ async function run() {
       return {
         id: review['user'].id,
         state: review['state'],
-        submitted_at: Date.parse(review['submitted_at'])
+        submitted_at: Date.parse(review['submitted_at']),
+        reviewerAssociation: ReviewerAssociation.fromString(
+          review['author_association']
+        )
       }
     });
 
@@ -31288,12 +31380,19 @@ async function run() {
 
     coreExports.debug('Filtering reviews by the same authors');
     simplifiedreviews.forEach((review) => {
-      if (userset.has(review.id)) {
-        if (review.submitted_at > userset.get(review.id).submitted_at) {
+      if (
+        ReviewerAssociation.isGreaterOrEqual(
+          review.reviewerAssociation,
+          reviewerAssociation
+        )
+      ) {
+        if (userset.has(review.id)) {
+          if (review.submitted_at > userset.get(review.id).submitted_at) {
+            userset.set(review.id, review);
+          }
+        } else {
           userset.set(review.id, review);
         }
-      } else {
-        userset.set(review.id, review);
       }
     });
 

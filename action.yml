@@ -21,6 +21,14 @@ inputs:
     required: true
     default: '1'
 
+  reviewer-association:
+    description:
+      The association of the reviewer with the repository, Possible values are
+      NONE, FIRST_TIMER, FIRST_TIME_CONTRIBUTOR, CONTRIBUTOR, COLLABORATOR,
+      MEMBER, OWNER
+    required: false
+    default: 'CONTRIBUTOR'
+
 runs:
   using: node24
   main: dist/index.js
