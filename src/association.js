@@ -74,6 +74,11 @@ export default class ReviewerAssociation {
         return ReviewerAssociation.Notfound
     }
   }
+
+  /**
+   * Converts the association to a string
+   * @returns {string} object string
+   */
   toString() {
     return `ReviewerAssociation.${this.string}`
   }
