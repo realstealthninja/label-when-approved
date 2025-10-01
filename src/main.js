@@ -61,7 +61,7 @@ export async function run() {
 
     core.debug('Filtering reviews by the same authors')
     simplifiedreviews.forEach((review) => {
-      core.debug(review.reviewerAssociation.string)
+      core.debug(review.reviewerAssociation.enumOrdinal)
       if (
         ReviewerAssociation.isGreaterOrEqual(
           review.reviewerAssociation,

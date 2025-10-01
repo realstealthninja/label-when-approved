@@ -31386,7 +31386,7 @@ async function run() {
 
     coreExports.debug('Filtering reviews by the same authors');
     simplifiedreviews.forEach((review) => {
-      coreExports.debug(review.reviewerAssociation.string);
+      coreExports.debug(review.reviewerAssociation.enumOrdinal);
       if (
         ReviewerAssociation.isGreaterOrEqual(
           review.reviewerAssociation,
