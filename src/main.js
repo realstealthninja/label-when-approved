@@ -16,6 +16,7 @@ export async function run() {
     const reviewerAssociation = ReviewerAssociation.fromString(
       core.getInput('reviewer-association')
     )
+    core.debug('Enum ordinal' + reviewerAssociation.enumOrdinal)
 
     const octokit = github.getOctokit(secret)
     const context = github.context
