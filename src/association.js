@@ -5,7 +5,7 @@ export default class ReviewerAssociation {
     'FIRST_TIME_CONTRIBUTOR'
   )
   static Contributor = new ReviewerAssociation('CONTRIBUTOR')
-  static Collaborator = new ReviewerAssociation('COLLARBORATOR')
+  static Collaborator = new ReviewerAssociation('COLLABORATOR')
   static Member = new ReviewerAssociation('MEMBER')
   static Owner = new ReviewerAssociation('OWNER')
 
