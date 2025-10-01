@@ -60,6 +60,7 @@ export async function run() {
 
     core.debug('Filtering reviews by the same authors')
     simplifiedreviews.forEach((review) => {
+      core.debug(review.reviewerAssociation.string)
       if (
         ReviewerAssociation.isGreaterOrEqual(
           review.reviewerAssociation,
@@ -73,6 +74,8 @@ export async function run() {
         } else {
           userset.set(review.id, review)
         }
+      } else {
+        core.debug("User's review has no value")
       }
     })
 
