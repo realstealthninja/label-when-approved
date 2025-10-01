@@ -31317,6 +31317,11 @@ class ReviewerAssociation {
         return ReviewerAssociation.Notfound
     }
   }
+
+  /**
+   * Converts the association to a string
+   * @returns {string} object string
+   */
   toString() {
     return `ReviewerAssociation.${this.string}`
   }
@@ -31336,6 +31341,7 @@ async function run() {
     const reviewerAssociation = ReviewerAssociation.fromString(
       coreExports.getInput('reviewer-association')
     );
+    coreExports.debug('Enum ordinal: ' + reviewerAssociation.enumOrdinal.toString());
 
     const octokit = githubExports.getOctokit(secret);
     const context = githubExports.context;
@@ -31380,12 +31386,14 @@ async function run() {
 
     coreExports.debug('Filtering reviews by the same authors');
     simplifiedreviews.forEach((review) => {
+      coreExports.debug(review.reviewerAssociation.string);
       if (
         ReviewerAssociation.isGreaterOrEqual(
           review.reviewerAssociation,
           reviewerAssociation
         )
       ) {
+        coreExports.debug('User has the right association');
         if (userset.has(review.id)) {
           if (review.submitted_at > userset.get(review.id).submitted_at) {
             userset.set(review.id, review);
@@ -31393,6 +31401,8 @@ async function run() {
         } else {
           userset.set(review.id, review);
         }
+      } else {
+        coreExports.debug("User's review has no value");
       }
     });
 
