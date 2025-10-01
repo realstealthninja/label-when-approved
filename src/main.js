@@ -67,6 +67,7 @@ export async function run() {
           reviewerAssociation
         )
       ) {
+        core.debug('User has the right association')
         if (userset.has(review.id)) {
           if (review.submitted_at > userset.get(review.id).submitted_at) {
             userset.set(review.id, review)
